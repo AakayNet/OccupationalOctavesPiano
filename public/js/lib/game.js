@@ -357,15 +357,14 @@ var Game = function (c) {
               var xo = (384 + (_w + 55) * i) * s;
               var yo = 60 * s;
               if (xo <= x && x <= xo + _w * s && yo <= y && y <= yo + _h * s) {
+                if (timer) timer.pause();
                 if (b == btn.help) {
                   //showHelp();
                 } else if (b == btn.pause) {
                   paused = true;
-                  if (timer) timer.pause();
                 } else if (b == btn.restart) {
                   startSong(song);
                 } else if (b == btn.menu) {
-                  if (timer) timer.pause();
                   state = states.menu;
                 }
               }
