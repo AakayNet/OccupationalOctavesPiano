@@ -1,0 +1,20 @@
+{
+    "name": "MusicGame",
+    "version": "0.0.1",
+    "description": "MusicGame",
+    "dependencies": {
+        "cookie": "latest",
+        "connect": "latest",
+        "express": "latest",
+        "jade": "latest",
+        "mongojs": "latest",
+        "passport": "latest",
+        "passport-facebook": "latest",
+        "passport-google": "latest",
+        "socket.io": "latest"
+    },
+    "author": [
+        { "name": "Michael Areau" },
+        { "name": "Akash Krishnan" }
+    ]
+}
