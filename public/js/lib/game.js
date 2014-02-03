@@ -1,9 +1,18 @@
 var Game = function (c) {
+
+  // Get canvas context
   var ctx = c.getContext('2d');
+
+  // Get window width and set it to canvas width
   var w = c.width = $(window).width();
+
+  // Calculate scaling parameter
   var s = w / 2048;
+
+  // Calculated scaled canvas height
   var h = c.height = 1536 * s;
 
+  // Attempt to create Web Audio API AudioContext
   var context;
   try {
     window.AudioContext = window.AudioContext || window.webkitAudioContext;
@@ -23,11 +32,15 @@ var Game = function (c) {
   var timer;
   var delay = 2000;
 
+
+  // List of all game states/stages
   var states = {
     main: 0,
     menu: 1,
     game: 2
   };
+
+  // List of all song notes structured by song, right/left hand, and note. Note of 0 is empty.
   var songs = [
     [
       [40, 40, 40, 40, 40, 40, 40, 40, 0, 0, 0, 0, 0, 0, 0, 0, 40, 40, 40, 40, 0, 0, 0, 0, 40, 40, 0, 0, 40, 40, 0, 0],
@@ -71,7 +84,7 @@ var Game = function (c) {
     ]
   ];
 
-  // Load Audio
+  // Load note tones asynchronously using Web Audio API
   var tones = {};
   for (var i = 33; i < 48; i++) {
     (function (i) {
@@ -88,6 +101,8 @@ var Game = function (c) {
       request.send();
     })(i);
   }
+
+  // Load other tones asynchronously using Web Audio API
   var request = new XMLHttpRequest();
   request.open('GET', '/snd/wrong.wav', true);
   request.responseType = 'arraybuffer';
@@ -111,7 +126,7 @@ var Game = function (c) {
   }
   request.send();
 
-  // Load Images
+  // Load all images asynchronously
   var bg = {
     main: loadImage('/img/bg-main.png'),
     menu: loadImage('/img/bg-menu.png'),
@@ -119,7 +134,7 @@ var Game = function (c) {
     paused: loadImage('/img/popup/paused.png')
   };
   var btn = loadButtons(['play', 'exit', 'options', 'help', 'help2', 'pause', 'restart', 'menu', 'continue', 'retry']);
-  var song_btn = loadSongButtons(10);
+  var song_btn = loadSongButtons(songs.length);
   var ms = loadImage('/img/ms08.png');
   var notes = loadNoteImages([33, 35, 37, 39, 40, 42, 44, 45, 47]);
   var cright = loadImage('/img/notes/40-right.png');
@@ -157,11 +172,15 @@ var Game = function (c) {
   scores[2] = loadImage('/img/popup/2-star.png');
   scores[3] = loadImage('/img/popup/3-star.png');
 
-  // Event Listeners
+  // Mouse event listeners
   c.onmousedown = function (e) {
+
+    // Determine x & y coordinates relative to canvas
     var mp = getMousePos(c, e);
     var x = mp.x;
     var y = mp.y;
+
+    // Determine what button was pressed based on current state and relative, scaled button coordinates
     switch (state) {
       case states.main:
       {
@@ -284,9 +303,13 @@ var Game = function (c) {
     }
   };
   c.onmouseup = function (e) {
+
+    // Determine x & y coordinates relative to canvas
     var mp = getMousePos(c, e);
     var x = mp.x;
     var y = mp.y;
+
+    // Determine what button was released based on current state and relative, scaled button coordinates
     switch (state) {
       case states.main:
       {
@@ -384,12 +407,20 @@ var Game = function (c) {
     bk.down = -1;
   };
 
+  // Draw all elements/buttons on the canvas based on current state
   function redraw() {
+
+    // Clear the entire canvas
     ctx.clearRect(0, 0, w, h);
+
+    // Handle each state separately
     switch (state) {
       case states.main:
       {
+        // Background
         ctx.drawImage(bg.main, 0, 0, w, h);
+
+        // Function buttons
         [btn.play, btn.exit, btn.options, btn.help].forEach(function (b, i) {
           var _w = b.img.up.width;
           var _h = b.img.up.height;
@@ -401,7 +432,10 @@ var Game = function (c) {
       }
       case states.menu:
       {
+        // Background
         ctx.drawImage(bg.menu, 0, 0, w, h);
+
+        // Song buttons
         song_btn.forEach(function (b, i) {
           var _w = b.img.up.width;
           var _h = b.img.up.height;
@@ -409,6 +443,8 @@ var Game = function (c) {
           var yo = (60 + (_h + 50) * Math.floor(i / 5)) * s;
           ctx.drawImage(b.down ? b.img.down : b.img.up, xo, yo, _w * s, _h * s);
         });
+
+        // Function buttons
         [btn.exit, btn.options, btn.help].forEach(function (b, i) {
           var _w = b.img.up.width;
           var _h = b.img.up.height;
@@ -423,7 +459,7 @@ var Game = function (c) {
         // Background
         ctx.drawImage(bg.game, 0, 0, w, h);
 
-        // Menu Buttons
+        // Function Buttons
         [btn.help2, btn.pause, btn.restart, btn.menu].forEach(function (b, i) {
           var _w = b.img.up.width;
           var _h = b.img.up.height;
@@ -439,24 +475,35 @@ var Game = function (c) {
         for (var i = 0; i < 8; i++) {
           var io = Math.floor(tracker.pos / 8) * 8;
           if (io + i < songs[song][0].length) {
+
+            // Right hand notes
             var rhn = songs[song][0][io + i];
             if (rhn) {
+
+              // Sharps
               if (isBlackKey(rhn)) {
                 rhn--;
                 ctx.drawImage(sharp, (235 + 12 + (12 + 176) * i) * s, (235 + 12) * s, sharp.width * s, sharp.height * s);
               }
+
+              // Special case for middle C (left hand or right hand)
               if (rhn == 40) {
                 ctx.drawImage(cright, (235 + 12 + (12 + 176) * i) * s, (235 + 12) * s, notes[33].width * s, notes[33].height * s);
               } else {
                 ctx.drawImage(notes[rhn], (235 + 12 + (12 + 176) * i) * s, (235 + 12) * s, notes[33].width * s, notes[33].height * s);
               }
             }
+
+            // Left hand notes
             var lhn = songs[song][1][io + i];
             if (lhn) {
+
+              // Sharps
               if (isBlackKey(lhn)) {
                 lhn--;
                 ctx.drawImage(sharp, (235 + 12 + (12 + 176) * i) * s, (235 + 12 + 176 + 12) * s, sharp.width * s, sharp.height * s);
               }
+
               ctx.drawImage(notes[lhn], (235 + 12 + (12 + 176) * i) * s, (235 + 12 + 176 + 12) * s, notes[33].width * s, notes[33].height * s);
             }
           }
@@ -489,9 +536,16 @@ var Game = function (c) {
         ctx.drawImage(labels, 170 * s, h - 500 * s, labels.width * s, labels.height * s);
 
         if (paused) {
+
+          // Paused popup
           ctx.drawImage(bg.paused, 0, 0, w, h);
+
         } else if (gameover) {
+
+          // Superscore
           var ss = tscore + nscore;
+
+          // Scorecard popup based on superscore (1/2/3 stars)
           if (ss <= 6) {
             ctx.drawImage(scores[1], 0, 0, w, h);
           } else if (ss <= 13) {
@@ -499,11 +553,15 @@ var Game = function (c) {
           } else if (ss <= 20) {
             ctx.drawImage(scores[3], 0, 0, w, h);
           }
+
+          // Score text in scorecard popup
           ctx.fillStyle = '#000000';
           ctx.textAlign = 'center';
           ctx.font = (70 * s) + 'px Verdana';
           ctx.fillText(tscore, 1173 * s, 716 * s);
           ctx.fillText(nscore, 1173 * s, 800 * s);
+
+          // Function buttons in scorecard popup
           [btn.continue, btn.retry].forEach(function (b, i) {
             var _w = b.img.up.width;
             var _h = b.img.up.height;
@@ -511,14 +569,19 @@ var Game = function (c) {
             var yo = h - (530 + _h) * s;
             ctx.drawImage(b.down ? b.img.down : b.img.up, xo, yo, _w * s, _h * s);
           });
+
         }
         break;
       }
     }
   }
 
+
+  // Set FPS (refresh/redraw rate) to 30
   setInterval(redraw, 1000 / 30);
 
+
+  // Prepare variables to start a song given a song id
   function startSong(id) {
     nscore = 10;
     tscore = 10;
@@ -529,10 +592,13 @@ var Game = function (c) {
     state = states.game;
   }
 
+
+  // Check if key number represents a black key
   function isBlackKey(n) {
     return bk.n.indexOf(n) != -1;
   }
 
+  // Get white key number, if applicable, given x & y coordinates
   function getWhiteKey(x, y) {
     for (var n = 0; n < wk.i.length; n++) {
       var i = wk.i[n];
@@ -547,6 +613,7 @@ var Game = function (c) {
     return -1;
   }
 
+  // Get black key number, if applicable, given x & y coordinates
   function getBlackKey(x, y) {
     for (var n = 0; n < bk.i.length; n++) {
       var i = bk.i[n];
@@ -561,6 +628,7 @@ var Game = function (c) {
     return -1;
   }
 
+  // Play a sound that has already been loaded given the name
   function playSound(name) {
     var source = context.createBufferSource();
     source.buffer = tones[name];
@@ -569,12 +637,14 @@ var Game = function (c) {
   }
 };
 
+// Load image asyncrhonously from given src/url
 function loadImage(src) {
   var img = new Image();
   img.src = src;
   return img;
 }
 
+// Load note images given list of note numbers
 function loadNoteImages(notes) {
   var img = {};
   for (var i = 0; i < notes.length; i++) {
@@ -583,6 +653,7 @@ function loadNoteImages(notes) {
   return img;
 }
 
+// Load function button given names
 function loadButton(name) {
   return {
     down: false,
@@ -593,6 +664,7 @@ function loadButton(name) {
   };
 }
 
+// Load function buttons given list of names
 function loadButtons(names) {
   var btn = {};
   for (var i = 0; i < names.length; i++) {
@@ -601,6 +673,7 @@ function loadButtons(names) {
   return btn;
 }
 
+// Load song buttons given number of songs
 function loadSongButtons(nSongs) {
   var btn = [];
   for (var i = 0; i < nSongs; i++) {
@@ -609,6 +682,7 @@ function loadSongButtons(nSongs) {
   return btn;
 }
 
+// Determine mouse coordinates given mouse event relative to canvas
 function getMousePos(c, e) {
   var r = c.getBoundingClientRect();
   return {
