@@ -305,12 +305,18 @@ var Game = function (c, songs) {
 
             wk.down = getWhiteKey(x, y);
             if (wk.down >= 0) {
-              playSound(wk.n[wk.down]);
+              var key = wk.n[wk.down];
+              playSound(key);
+              songs[song].right.push(key >= 40 ? key : 0);
+              songs[song].left.push(key >= 40 ? 0 : key);
               tracker.pos++;
             }
 
           } else {
-            playSound(bk.n[bk.down]);
+            var key = bk.n[bk.down];
+            playSound(key);
+            songs[song].right.push(key >= 40 ? key : 0);
+            songs[song].left.push(key >= 40 ? 0 : key);
             tracker.pos++;
           }
 
