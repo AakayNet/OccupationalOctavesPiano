@@ -45,33 +45,25 @@ var Game = function (c, songs) {
   /**
    * Load all images asynchronously
    */
+  var nImages = 61;
+  var loadedImages = 0;
+  var incrementImages = function () {
+    loadedImages++;
+  };
   var bg = {
-    main: loadImage('/img/bg-main.png'),
-    menu: loadImage('/img/bg-menu.png'),
-    game: loadImage('/img/bg-game.png'),
-    paused: loadImage('/img/popup/paused.png')
+    main: loadImage('/img/bg-main.png', incrementImages),
+    menu: loadImage('/img/bg-menu.png', incrementImages),
+    game: loadImage('/img/bg-game.png', incrementImages),
+    paused: loadImage('/img/popup/paused.png', incrementImages)
   };
-  var btn = loadButtons(['freeplay', 'song', 'play', 'exit', 'options', 'help', 'help2', 'pause', 'restart', 'menu', 'continue', 'retry']);
-  var ms = loadImage('/img/ms08.png');
-  var song_notes = loadSongNoteImages([33, 35, 37, 39, 40, 42, 44, 45, 47]);
-  var notes = loadNoteImages([33, 35, 37, 39, 40, 42, 44, 45, 47]);
-  var cright = loadImage('/img/notes/40-right.png');
-  var sharp = loadImage('/img/notes/sharp.png');
-  var tracker = {
-    pos: 0,
-    time: 0,
-    img: {
-      active: loadImage('/img/btn/tracker-active.png'),
-      alert: loadImage('/img/btn/tracker-alert.png')
-    }
-  };
+  var btn = loadButtons(['freeplay', 'song', 'play', 'exit', 'options', 'help', 'help2', 'pause', 'restart', 'menu', 'continue', 'retry'], incrementImages);
   var wk = {
     i: [0, 1, 2, 3, 4, 5, 6, 7, 8],
     n: [33, 35, 37, 39, 40, 42, 44, 45, 47],
     down: -1,
     img: {
-      up: loadImage('/img/btn/wk.png'),
-      down: loadImage('/img/btn/wk-down.png')
+      up: loadImage('/img/btn/wk.png', incrementImages),
+      down: loadImage('/img/btn/wk-down.png', incrementImages)
     }
   };
   var bk = {
@@ -79,16 +71,30 @@ var Game = function (c, songs) {
     n: [34, 36, 38, 41, 43, 46],
     down: -1,
     img: {
-      up: loadImage('/img/btn/bk.png'),
-      down: loadImage('/img/btn/bk-down.png')
+      up: loadImage('/img/btn/bk.png', incrementImages),
+      down: loadImage('/img/btn/bk-down.png', incrementImages)
     }
   };
-  var labels = loadImage('/img/labels.png');
-  var paused = loadImage('/img/popup/paused.png');
-  var scores = [];
-  scores[1] = loadImage('/img/popup/1-star.png');
-  scores[2] = loadImage('/img/popup/2-star.png');
-  scores[3] = loadImage('/img/popup/3-star.png');
+  var tracker = {
+    pos: 0,
+    time: 0,
+    img: {
+      active: loadImage('/img/btn/tracker-active.png', incrementImages),
+      alert: loadImage('/img/btn/tracker-alert.png', incrementImages)
+    }
+  };
+  var song_notes = loadSongNoteImages(wk.n, incrementImages);
+  var notes = loadNoteImages(wk.n, incrementImages);
+  var cright = loadImage('/img/notes/40-right.png', incrementImages);
+  var sharp = loadImage('/img/notes/sharp.png', incrementImages);
+  var ms = loadImage('/img/ms08.png', incrementImages);
+  var labels = loadImage('/img/labels.png', incrementImages);
+  var paused = loadImage('/img/popup/paused.png', incrementImages);
+  var scores = {
+    1: loadImage('/img/popup/1-star.png', incrementImages),
+    2: loadImage('/img/popup/2-star.png', incrementImages),
+    3: loadImage('/img/popup/3-star.png', incrementImages)
+  };
 
   /**
    * Load note tones synchronously using Web Audio API
@@ -112,7 +118,7 @@ var Game = function (c, songs) {
         });
       };
       request.send();
-    } else state = states.main;
+    }
   };
   loadTone(0);
 
@@ -134,6 +140,7 @@ var Game = function (c, songs) {
       case states.main:
       {
 
+        // Function buttons
         [btn.play, btn.exit, btn.options, btn.help].forEach(function (b, i) {
           var _w = b.img.up.width;
           var _h = b.img.up.height;
@@ -156,13 +163,14 @@ var Game = function (c, songs) {
         var b = btn.freeplay;
         var _w = b.img.up.width;
         var _h = b.img.up.height;
-        var xo = (1600 - _w / 2) * s;
+        var xo = (1024 - _w / 2) * s;
         var yo = (95 - _h / 2) * s;
         if (xo <= x && x <= xo + _w * s && yo <= y && y <= yo + _h * s) {
           playSound('click');
           b.down = true;
         }
 
+        // Song buttons
         var b = btn.song;
         songs.forEach(function (song, i) {
           var _w = b.img.up.width;
@@ -175,6 +183,7 @@ var Game = function (c, songs) {
           }
         });
 
+        // Function buttons
         [btn.exit, btn.options, btn.help].forEach(function (b, i) {
           var _w = b.img.up.width;
           var _h = b.img.up.height;
@@ -382,7 +391,7 @@ var Game = function (c, songs) {
         if (b.down) {
           var _w = b.img.up.width;
           var _h = b.img.up.height;
-          var xo = (1600 - _w / 2) * s;
+          var xo = (1024 - _w / 2) * s;
           var yo = (95 - _h / 2) * s;
           if (xo <= x && x <= xo + _w * s && yo <= y && y <= yo + _h * s) {
             startFreePlay();
@@ -519,7 +528,7 @@ var Game = function (c, songs) {
         ctx.stroke();
 
         // Draw progress
-        var p = loadedTones / nTones;
+        var p = (loadedImages + loadedTones) / (nImages + nTones);
         ctx.fillRect(xo, yo, _w * s * p, _h * s);
 
         break;
@@ -555,7 +564,7 @@ var Game = function (c, songs) {
         var b = btn.freeplay;
         var _w = b.img.up.width;
         var _h = b.img.up.height;
-        var xo = (1600 - _w / 2) * s;
+        var xo = (1024 - _w / 2) * s;
         var yo = (95 - _h / 2) * s;
         ctx.drawImage(b.down ? b.img.down : b.img.up, xo, yo, _w * s, _h * s);
 
@@ -847,8 +856,9 @@ var Game = function (c, songs) {
  * @param (String) src
  * @returns {Image}
  */
-function loadImage(src) {
+function loadImage(src, done) {
   var img = new Image();
+  img.onload(done);
   img.src = src;
   return img;
 }
@@ -859,10 +869,10 @@ function loadImage(src) {
  * @param (Array) notes
  * @returns {Object}
  */
-function loadSongNoteImages(notes) {
+function loadSongNoteImages(notes, done) {
   var img = {};
   for (var i = 0; i < notes.length; i++) {
-    img[notes[i]] = loadImage('/img/btn/song/' + notes[i] + '.png');
+    img[notes[i]] = loadImage('/img/btn/song/' + notes[i] + '.png', done);
   }
   return img;
 }
@@ -873,10 +883,10 @@ function loadSongNoteImages(notes) {
  * @param (Array) notes
  * @returns {Object}
  */
-function loadNoteImages(notes) {
+function loadNoteImages(notes, done) {
   var img = {};
   for (var i = 0; i < notes.length; i++) {
-    img[notes[i]] = loadImage('/img/notes/' + notes[i] + '.png');
+    img[notes[i]] = loadImage('/img/notes/' + notes[i] + '.png', done);
   }
   return img;
 }
@@ -887,12 +897,12 @@ function loadNoteImages(notes) {
  * @param (String) name
  * @returns {{down: boolean, img: {up: Image, down: Image}}}
  */
-function loadButton(name) {
+function loadButton(name, done) {
   return {
     down: false,
     img: {
-      up: loadImage('/img/btn/' + name + '.png'),
-      down: loadImage('/img/btn/' + name + '-down.png')
+      up: loadImage('/img/btn/' + name + '.png', done),
+      down: loadImage('/img/btn/' + name + '-down.png', done)
     }
   };
 }
@@ -903,10 +913,10 @@ function loadButton(name) {
  * @param names
  * @returns {Object}
  */
-function loadButtons(names) {
+function loadButtons(names, done) {
   var btn = {};
   for (var i = 0; i < names.length; i++) {
-    btn[names[i]] = loadButton(names[i]);
+    btn[names[i]] = loadButton(names[i], done);
   }
   return btn;
 }
