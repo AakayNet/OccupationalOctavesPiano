@@ -1,2 +1,2 @@
-OccupationalOctavesPiano
-========================
+occupational-octaves-piano
+==========================
