@@ -42,10 +42,13 @@ var Game = function (c, songs) {
     free: 4
   };
 
+  // Set FPS (refresh/redraw rate) to 30
+  setInterval(redraw, 1000 / 30);
+
   /**
    * Load all images asynchronously
    */
-  var nImages = 61;
+  var nImages = 60;
   var loadedImages = 0;
   var incrementImages = function () {
     loadedImages++;
@@ -163,7 +166,7 @@ var Game = function (c, songs) {
         var b = btn.freeplay;
         var _w = b.img.up.width;
         var _h = b.img.up.height;
-        var xo = (1024 - _w / 2) * s;
+        var xo = (1087 - _w / 2) * s;
         var yo = (95 - _h / 2) * s;
         if (xo <= x && x <= xo + _w * s && yo <= y && y <= yo + _h * s) {
           playSound('click');
@@ -391,7 +394,7 @@ var Game = function (c, songs) {
         if (b.down) {
           var _w = b.img.up.width;
           var _h = b.img.up.height;
-          var xo = (1024 - _w / 2) * s;
+          var xo = (1087 - _w / 2) * s;
           var yo = (95 - _h / 2) * s;
           if (xo <= x && x <= xo + _w * s && yo <= y && y <= yo + _h * s) {
             startFreePlay();
@@ -499,9 +502,6 @@ var Game = function (c, songs) {
 
   };
 
-  // Set FPS (refresh/redraw rate) to 30
-  setInterval(redraw, 1000 / 30);
-
   /**
    * Draw all elements/buttons on the canvas based on current state
    */
@@ -528,8 +528,10 @@ var Game = function (c, songs) {
         ctx.stroke();
 
         // Draw progress
-        var p = (loadedImages + loadedTones) / (nImages + nTones);
+        var p = (1 / 3) * (loadedImages / nImages) + (2 / 3) * (loadedTones / nTones);
         ctx.fillRect(xo, yo, _w * s * p, _h * s);
+
+        if (p == 1) state = states.main;
 
         break;
 
@@ -564,7 +566,7 @@ var Game = function (c, songs) {
         var b = btn.freeplay;
         var _w = b.img.up.width;
         var _h = b.img.up.height;
-        var xo = (1024 - _w / 2) * s;
+        var xo = (1087 - _w / 2) * s;
         var yo = (95 - _h / 2) * s;
         ctx.drawImage(b.down ? b.img.down : b.img.up, xo, yo, _w * s, _h * s);
 
@@ -854,11 +856,12 @@ var Game = function (c, songs) {
  * Load image asyncrhonously from given src/url
  *
  * @param (String) src
+ * @param (Function) done
  * @returns {Image}
  */
 function loadImage(src, done) {
   var img = new Image();
-  img.onload(done);
+  img.onload = done;
   img.src = src;
   return img;
 }
@@ -867,6 +870,7 @@ function loadImage(src, done) {
  * Load song note images given list of note numbers
  *
  * @param (Array) notes
+ * @param (Function) done
  * @returns {Object}
  */
 function loadSongNoteImages(notes, done) {
@@ -881,6 +885,7 @@ function loadSongNoteImages(notes, done) {
  * Load note images given list of note numbers
  *
  * @param (Array) notes
+ * @param (Function) done
  * @returns {Object}
  */
 function loadNoteImages(notes, done) {
@@ -895,6 +900,7 @@ function loadNoteImages(notes, done) {
  * Load function button given names
  *
  * @param (String) name
+ * @param (Function) done
  * @returns {{down: boolean, img: {up: Image, down: Image}}}
  */
 function loadButton(name, done) {
@@ -911,6 +917,7 @@ function loadButton(name, done) {
  * Load function buttons given list of names
  *
  * @param names
+ * @param (Function) done
  * @returns {Object}
  */
 function loadButtons(names, done) {
