@@ -179,7 +179,6 @@ var Game = function (c, songs) {
 
       }
 
-      case states.free:
       case states.game:
       {
 
@@ -255,7 +254,7 @@ var Game = function (c, songs) {
               if (timer) timer.pause();
               if (nscore < 0) nscore = 0;
               if (tscore < 0) tscore = 0;
-              if (tracker.pos == songs[song][0].length) {
+              if (tracker.pos == songs[song].left.length) {
                 gameover = true;
               } else {
                 timer = new Timer(function () {
@@ -272,6 +271,47 @@ var Game = function (c, songs) {
 
             }
 
+          }
+
+        }
+
+        break;
+
+      }
+
+      case states.free:
+      {
+
+        if (paused) {
+
+          paused = false;
+
+        } else {
+
+          [btn.help2, btn.pause, btn.restart, btn.menu].forEach(function (b, i) {
+            var _w = b.img.up.width;
+            var _h = b.img.up.height;
+            var xo = (384 + (_w + 55) * i) * s;
+            var yo = 60 * s;
+            if (xo <= x && x <= xo + _w * s && yo <= y && y <= yo + _h * s) {
+              playSound('click');
+              b.down = true;
+            }
+          });
+
+          wk.down = -1;
+          bk.down = getBlackKey(x, y);
+          if (bk.down < 0) {
+
+            wk.down = getWhiteKey(x, y);
+            if (wk.down >= 0) {
+              playSound(wk.n[wk.down]);
+              tracker.pos++;
+            }
+
+          } else {
+            playSound(bk.n[bk.down]);
+            tracker.pos++;
           }
 
         }
@@ -350,7 +390,6 @@ var Game = function (c, songs) {
 
       }
 
-      case states.free:
       case states.game:
       {
 
@@ -376,6 +415,28 @@ var Game = function (c, songs) {
               if (b == btn.help) /*showHelp()*/;
               else if (b == btn.pause) paused = true;
               else if (b == btn.restart) startSong(song);
+              else if (b == btn.menu) state = states.menu;
+            }
+          }
+        });
+
+        break;
+
+      }
+
+      case states.free:
+      {
+
+        [btn.help2, btn.pause, btn.restart, btn.menu].forEach(function (b, i) {
+          if (b.down) {
+            var _w = b.img.up.width;
+            var _h = b.img.up.height;
+            var xo = (384 + (_w + 55) * i) * s;
+            var yo = 60 * s;
+            if (xo <= x && x <= xo + _w * s && yo <= y && y <= yo + _h * s) {
+              if (b == btn.help) /*showHelp()*/;
+              else if (b == btn.pause) paused = true;
+              else if (b == btn.restart) startFreePlay();
               else if (b == btn.menu) state = states.menu;
             }
           }
@@ -644,6 +705,7 @@ var Game = function (c, songs) {
     nscore = 10;
     tscore = 10;
     tracker.pos = 0;
+    timeup = false;
     gameover = false;
     paused = false;
     song = id;
@@ -654,10 +716,15 @@ var Game = function (c, songs) {
    * Prepare variables to start free play mode
    */
   function startFreePlay() {
+    nscore = 10;
+    tscore = 10;
     tracker.pos = 0;
+    timeup = false;
     gameover = false;
     paused = false;
-    song = songs.length;
+    song = 0;
+    songs[0].left = [];
+    songs[0].right = [];
     state = states.free;
   }
 
