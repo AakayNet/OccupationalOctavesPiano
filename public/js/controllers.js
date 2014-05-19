@@ -8,11 +8,6 @@ function homeCtrl() {
   // List of all song notes structured by song, right/left hand, and note. Note of 0 is empty.
   var songs = [
     {
-      name: 'Free Play Mode',
-      right: [],
-      left: []
-    },
-    {
       name: 'The New C',
       right: [40, 40, 40, 40, 40, 40, 40, 40, 0, 0, 0, 0, 0, 0, 0, 0, 40, 40, 40, 40, 0, 0, 0, 0, 40, 40, 0, 0, 40, 40, 0, 0],
       left: [0, 0, 0, 0, 0, 0, 0, 0, 40, 40, 40, 40, 40, 40, 40, 40, 0, 0, 0, 0, 40, 40, 40, 40, 0, 0, 40, 40, 0, 0, 40, 40]
