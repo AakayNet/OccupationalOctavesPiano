@@ -1,3 +1,2 @@
 @ECHO OFF
-node server.js
-pause
+supervisor -q server.js

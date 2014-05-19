@@ -9,7 +9,7 @@ var Game = function (c) {
   // Calculate scaling parameter
   var s = w / 2048;
 
-  // Calculated scaled canvas height
+  // Calculate scaled canvas height
   var h = c.height = 1536 * s;
 
   // Attempt to create Web Audio API AudioContext
@@ -35,9 +35,11 @@ var Game = function (c) {
 
   // List of all game states/stages
   var states = {
-    main: 0,
-    menu: 1,
-    game: 2
+    loading: 0,
+    main: 1,
+    menu: 2,
+    game: 3,
+    free: 4
   };
 
   // List of all song notes structured by song, right/left hand, and note. Note of 0 is empty.
@@ -84,48 +86,6 @@ var Game = function (c) {
     ]
   ];
 
-  // Load note tones asynchronously using Web Audio API
-  var tones = {};
-  for (var i = 33; i < 48; i++) {
-    (function (i) {
-      var request = new XMLHttpRequest();
-      request.open('GET', '/snd/' + i + '.wav', true);
-      request.responseType = 'arraybuffer';
-      request.onload = function () {
-        context.decodeAudioData(request.response, function (buffer) {
-          tones[i] = buffer;
-        }, function (error) {
-          console.log(error);
-        });
-      }
-      request.send();
-    })(i);
-  }
-
-  // Load other tones asynchronously using Web Audio API
-  var request = new XMLHttpRequest();
-  request.open('GET', '/snd/wrong.wav', true);
-  request.responseType = 'arraybuffer';
-  request.onload = function () {
-    context.decodeAudioData(request.response, function (buffer) {
-      tones['wrong'] = buffer;
-      var request = new XMLHttpRequest();
-      request.open('GET', '/snd/click.wav', true);
-      request.responseType = 'arraybuffer';
-      request.onload = function () {
-        context.decodeAudioData(request.response, function (buffer) {
-          tones['click'] = buffer;
-        }, function (error) {
-          console.log(error);
-        });
-      }
-      request.send();
-    }, function (error) {
-      console.log(error);
-    });
-  }
-  request.send();
-
   // Load all images asynchronously
   var bg = {
     main: loadImage('/img/bg-main.png'),
@@ -167,12 +127,40 @@ var Game = function (c) {
   };
   var labels = loadImage('/img/labels.png');
   var paused = loadImage('/img/popup/paused.png');
-  var scores = {};
+  var scores = [];
   scores[1] = loadImage('/img/popup/1-star.png');
   scores[2] = loadImage('/img/popup/2-star.png');
   scores[3] = loadImage('/img/popup/3-star.png');
 
-  // Mouse event listeners
+  // Load note tones synchronously using Web Audio API
+  var tones = {};
+  var tone_names = ['wrong', 'click'];
+  for (var i = 33; i < 48; i++) tone_names.push(i);
+  var nTones = tone_names.length;
+  var loadedTones = 0;
+  var loadTone = function (i) {
+    if (i < nTones) {
+      var request = new XMLHttpRequest();
+      request.open('GET', '/snd/' + tone_names[i] + '.mp3', true);
+      request.responseType = 'arraybuffer';
+      request.onload = function () {
+        context.decodeAudioData(request.response, function (buffer) {
+          tones[tone_names[i]] = buffer;
+          loadTone(++loadedTones);
+        }, function (error) {
+          console.log(error);
+        });
+      };
+      request.send();
+    } else state = states.main;
+  };
+  loadTone(loadedTones);
+
+  /**
+   * Mouse down event listener
+   *
+   * @param (Object) e
+   */
   c.onmousedown = function (e) {
 
     // Determine x & y coordinates relative to canvas
@@ -182,8 +170,10 @@ var Game = function (c) {
 
     // Determine what button was pressed based on current state and relative, scaled button coordinates
     switch (state) {
+
       case states.main:
       {
+
         [btn.play, btn.exit, btn.options, btn.help].forEach(function (b, i) {
           var _w = b.img.up.width;
           var _h = b.img.up.height;
@@ -194,10 +184,14 @@ var Game = function (c) {
             b.down = true;
           }
         });
+
         break;
+
       }
+
       case states.menu:
       {
+
         song_btn.forEach(function (b, i) {
           var _w = b.img.up.width;
           var _h = b.img.up.height;
@@ -208,6 +202,7 @@ var Game = function (c) {
             b.down = true;
           }
         });
+
         [btn.exit, btn.options, btn.help].forEach(function (b, i) {
           var _w = b.img.up.width;
           var _h = b.img.up.height;
@@ -218,16 +213,21 @@ var Game = function (c) {
             b.down = true;
           }
         });
+
         break;
+
       }
+
       case states.game:
       {
+
         if (paused) {
+
           paused = false;
-          if (timer) {
-            timer.resume();
-          }
+          if (timer) timer.resume();
+
         } else if (gameover) {
+
           [btn.continue, btn.retry].forEach(function (b, i) {
             var _w = b.img.up.width;
             var _h = b.img.up.height;
@@ -238,7 +238,9 @@ var Game = function (c) {
               b.down = true;
             }
           });
+
         } else {
+
           [btn.help2, btn.pause, btn.restart, btn.menu].forEach(function (b, i) {
             var _w = b.img.up.width;
             var _h = b.img.up.height;
@@ -249,12 +251,15 @@ var Game = function (c) {
               b.down = true;
             }
           });
+
           wk.down = -1;
           bk.down = getBlackKey(x, y);
           if (bk.down < 0) {
+
             wk.down = getWhiteKey(x, y);
             if (wk.down >= 0) {
               if (wk.n[wk.down] == songs[song][0][tracker.pos] || wk.n[wk.down] == songs[song][1][tracker.pos]) {
+
                 playSound(wk.n[wk.down]);
                 timeup = false;
                 tracker.pos++;
@@ -270,12 +275,17 @@ var Game = function (c) {
                     timeup = true;
                   }, delay);
                 }
+
               } else {
+
                 playSound('wrong');
                 nscore--;
+
               }
             }
+
           } else {
+
             if (bk.n[wk.down] == songs[song][0][tracker.pos] || bk.n[bk.down] == songs[song][1][tracker.pos]) {
               playSound(bk.n[bk.down]);
               timeup = false;
@@ -292,16 +302,37 @@ var Game = function (c) {
                   timeup = true;
                 }, delay);
               }
+
             } else {
+
               playSound('wrong');
               nscore--;
+
             }
+
           }
+
         }
+
         break;
+
       }
+
+      case states.free:
+      {
+
+        break;
+
+      }
+
     }
   };
+
+  /**
+   * Mouse up event listener
+   *
+   * @param (Object) e
+   */
   c.onmouseup = function (e) {
 
     // Determine x & y coordinates relative to canvas
@@ -311,8 +342,10 @@ var Game = function (c) {
 
     // Determine what button was released based on current state and relative, scaled button coordinates
     switch (state) {
+
       case states.main:
       {
+
         [btn.play, btn.exit, btn.options, btn.help].forEach(function (b, i) {
           if (b.down) {
             var _w = b.img.up.width;
@@ -326,10 +359,14 @@ var Game = function (c) {
             }
           }
         });
+
         break;
+
       }
+
       case states.menu:
       {
+
         song_btn.forEach(function (b, i) {
           if (b.down) {
             var _w = b.img.up.width;
@@ -341,6 +378,7 @@ var Game = function (c) {
             }
           }
         });
+
         [btn.exit, btn.options, btn.help].forEach(function (b, i) {
           if (b.down) {
             var _w = b.img.up.width;
@@ -354,60 +392,79 @@ var Game = function (c) {
             }
           }
         });
+
         break;
+
       }
+
       case states.game:
       {
-        if (gameover) {
-          [btn.continue, btn.retry].forEach(function (b, i) {
+
+        if (gameover) [btn.continue, btn.retry].forEach(function (b, i) {
+          var _w = b.img.up.width;
+          var _h = b.img.up.height;
+          var xo = (718 + (_w + 55) * i) * s;
+          var yo = h - (530 + _h) * s;
+          if (xo <= x && x <= xo + _w * s && yo <= y && y <= yo + _h * s) {
+            if (b == btn.retry) {
+              startSong(song);
+            } else {
+              state = states.menu;
+            }
+          }
+        });
+
+        else [btn.help2, btn.pause, btn.restart, btn.menu].forEach(function (b, i) {
+          if (b.down) {
             var _w = b.img.up.width;
             var _h = b.img.up.height;
-            var xo = (718 + (_w + 55) * i) * s;
-            var yo = h - (530 + _h) * s;
+            var xo = (384 + (_w + 55) * i) * s;
+            var yo = 60 * s;
             if (xo <= x && x <= xo + _w * s && yo <= y && y <= yo + _h * s) {
-              if (b == btn.retry) {
+              if (timer) timer.pause();
+              if (b == btn.help) {
+                //showHelp();
+              } else if (b == btn.pause) {
+                paused = true;
+              } else if (b == btn.restart) {
                 startSong(song);
-              } else {
+              } else if (b == btn.menu) {
                 state = states.menu;
               }
             }
-          });
-        } else {
-          [btn.help2, btn.pause, btn.restart, btn.menu].forEach(function (b, i) {
-            if (b.down) {
-              var _w = b.img.up.width;
-              var _h = b.img.up.height;
-              var xo = (384 + (_w + 55) * i) * s;
-              var yo = 60 * s;
-              if (xo <= x && x <= xo + _w * s && yo <= y && y <= yo + _h * s) {
-                if (timer) timer.pause();
-                if (b == btn.help) {
-                  //showHelp();
-                } else if (b == btn.pause) {
-                  paused = true;
-                } else if (b == btn.restart) {
-                  startSong(song);
-                } else if (b == btn.menu) {
-                  state = states.menu;
-                }
-              }
-            }
-          });
-        }
+          }
+        });
+
+        break;
+
+      }
+
+      case states.free:
+      {
         break;
       }
+
     }
+
     $.each(btn, function (i, b) {
       b.down = false;
     });
+
     song_btn.forEach(function (b, i) {
       b.down = false;
     });
+
     wk.down = -1;
     bk.down = -1;
+
   };
 
-  // Draw all elements/buttons on the canvas based on current state
+  // Set FPS (refresh/redraw rate) to 30
+  setInterval(redraw, 1000 / 30);
+
+  /**
+   * Draw all elements/buttons on the canvas based on current state
+   */
   function redraw() {
 
     // Clear the entire canvas
@@ -415,8 +472,33 @@ var Game = function (c) {
 
     // Handle each state separately
     switch (state) {
+
+      case states.loading:
+      {
+
+        // Background
+        ctx.drawImage(bg.main, 0, 0, w, h);
+
+        // Draw progress bar
+        var _w = btn.play.img.up.width;
+        _w = (_w * 4 + 55 * 3) * s;
+        var _h = btn.play.img.up.height;
+        var xo = 340 * s;
+        var yo = h - (120 + _h) * s;
+        ctx.rect(xo, yo, _w, _h * s);
+        ctx.stroke();
+
+        // Draw progress
+        var p = loadedTones / nTones;
+        ctx.fillRect(xo, yo, _w * p, _h * s);
+
+        break;
+
+      }
+
       case states.main:
       {
+
         // Background
         ctx.drawImage(bg.main, 0, 0, w, h);
 
@@ -428,10 +510,14 @@ var Game = function (c) {
           var yo = h - (120 + _h) * s;
           ctx.drawImage(b.down ? b.img.down : b.img.up, xo, yo, _w * s, _h * s);
         });
+
         break;
+
       }
+
       case states.menu:
       {
+
         // Background
         ctx.drawImage(bg.menu, 0, 0, w, h);
 
@@ -452,10 +538,14 @@ var Game = function (c) {
           var yo = h - (30 + _h) * s;
           ctx.drawImage(b.down ? b.img.down : b.img.up, xo, yo, _w * s, _h * s);
         });
+
         break;
+
       }
+
       case states.game:
       {
+
         // Background
         ctx.drawImage(bg.game, 0, 0, w, h);
 
@@ -473,6 +563,7 @@ var Game = function (c) {
 
         // Notes
         for (var i = 0; i < 8; i++) {
+
           var io = Math.floor(tracker.pos / 8) * 8;
           if (io + i < songs[song][0].length) {
 
@@ -492,6 +583,7 @@ var Game = function (c) {
               } else {
                 ctx.drawImage(notes[rhn], (235 + 12 + (12 + 176) * i) * s, (235 + 12) * s, notes[33].width * s, notes[33].height * s);
               }
+
             }
 
             // Left hand notes
@@ -505,8 +597,11 @@ var Game = function (c) {
               }
 
               ctx.drawImage(notes[lhn], (235 + 12 + (12 + 176) * i) * s, (235 + 12 + 176 + 12) * s, notes[33].width * s, notes[33].height * s);
+
             }
+
           }
+
         }
 
         // Tracker
@@ -571,17 +666,26 @@ var Game = function (c) {
           });
 
         }
+
         break;
+
       }
+
+      case states.free:
+      {
+
+        break;
+
+      }
+
     }
   }
 
-
-  // Set FPS (refresh/redraw rate) to 30
-  setInterval(redraw, 1000 / 30);
-
-
-  // Prepare variables to start a song given a song id
+  /**
+   * Prepare variables to start a song given a song id
+   *
+   * @param (Number) id song's id
+   */
   function startSong(id) {
     nscore = 10;
     tscore = 10;
@@ -592,13 +696,34 @@ var Game = function (c) {
     state = states.game;
   }
 
+  /**
+   * Prepare variables to start free play mode
+   */
+  function startFreePlay() {
+    tracker.pos = 0;
+    gameover = false;
+    paused = false;
+    state = states.free;
+  }
 
-  // Check if key number represents a black key
+
+  /**
+   * Check if key number represents a black key
+   *
+   * @param (Number) n key number
+   * @returns {boolean}
+   */
   function isBlackKey(n) {
     return bk.n.indexOf(n) != -1;
   }
 
-  // Get white key number, if applicable, given x & y coordinates
+  /**
+   * Get white key number, if applicable, given x & y coordinates
+   *
+   * @param (Number) x
+   * @param (Number) y
+   * @returns {number}
+   */
   function getWhiteKey(x, y) {
     for (var n = 0; n < wk.i.length; n++) {
       var i = wk.i[n];
@@ -613,7 +738,13 @@ var Game = function (c) {
     return -1;
   }
 
-  // Get black key number, if applicable, given x & y coordinates
+  /**
+   * Get black key number, if applicable, given x & y coordinates
+   *
+   * @param (Number) x
+   * @param (Number) y
+   * @returns {number}
+   */
   function getBlackKey(x, y) {
     for (var n = 0; n < bk.i.length; n++) {
       var i = bk.i[n];
@@ -628,23 +759,40 @@ var Game = function (c) {
     return -1;
   }
 
-  // Play a sound that has already been loaded given the name
+  /**
+   * Play a sound that has already been loaded given the name
+   *
+   * @param (String) name
+   */
   function playSound(name) {
-    var source = context.createBufferSource();
-    source.buffer = tones[name];
-    source.connect(context.destination);
-    source.start(0);
+    if (tones[name]) {
+      var source = context.createBufferSource();
+      source.buffer = tones[name];
+      source.connect(context.destination);
+      source.start(0);
+    }
   }
+
 };
 
-// Load image asyncrhonously from given src/url
+/**
+ * Load image asyncrhonously from given src/url
+ *
+ * @param (String) src
+ * @returns {Image}
+ */
 function loadImage(src) {
   var img = new Image();
   img.src = src;
   return img;
 }
 
-// Load note images given list of note numbers
+/**
+ * Load note images given list of note numbers
+ *
+ * @param (Array) notes
+ * @returns {Object}
+ */
 function loadNoteImages(notes) {
   var img = {};
   for (var i = 0; i < notes.length; i++) {
@@ -653,7 +801,12 @@ function loadNoteImages(notes) {
   return img;
 }
 
-// Load function button given names
+/**
+ * Load function button given names
+ *
+ * @param (String) name
+ * @returns {{down: boolean, img: {up: Image, down: Image}}}
+ */
 function loadButton(name) {
   return {
     down: false,
@@ -664,7 +817,12 @@ function loadButton(name) {
   };
 }
 
-// Load function buttons given list of names
+/**
+ * Load function buttons given list of names
+ *
+ * @param names
+ * @returns {Object}
+ */
 function loadButtons(names) {
   var btn = {};
   for (var i = 0; i < names.length; i++) {
@@ -673,7 +831,12 @@ function loadButtons(names) {
   return btn;
 }
 
-// Load song buttons given number of songs
+/**
+ * Load song buttons given number of songs
+ *
+ * @param nSongs
+ * @returns {Array}
+ */
 function loadSongButtons(nSongs) {
   var btn = [];
   for (var i = 0; i < nSongs; i++) {
@@ -682,7 +845,13 @@ function loadSongButtons(nSongs) {
   return btn;
 }
 
-// Determine mouse coordinates given mouse event relative to canvas
+/**
+ * Determine mouse coordinates given mouse event relative to canvas
+ *
+ * @param (Object) c
+ * @param (Object) e
+ * @returns {{x: number, y: number}}
+ */
 function getMousePos(c, e) {
   var r = c.getBoundingClientRect();
   return {
@@ -691,16 +860,33 @@ function getMousePos(c, e) {
   };
 }
 
-// Timer with pause/resume functionality
+/**
+ * Timer with pause/resume functionality
+ *
+ * @param (Function) callback called when timer finishes
+ * @param (Number) delay millisecond delay time
+ * @constructor
+ */
 function Timer(callback, delay) {
+
   var timerId, start, remaining = delay;
+
+  /**
+   * Pauses the timer
+   */
   this.pause = function () {
     window.clearTimeout(timerId);
     remaining -= new Date() - start;
   };
+
+  /**
+   * Resumes the timer
+   */
   this.resume = function () {
     start = new Date();
     timerId = window.setTimeout(callback, remaining);
   };
+
   this.resume();
+
 }

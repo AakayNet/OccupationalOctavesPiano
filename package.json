@@ -1,20 +1,21 @@
 {
-    "name": "MusicGame",
-    "version": "0.0.1",
-    "description": "MusicGame",
-    "dependencies": {
-        "cookie": "latest",
-        "connect": "latest",
-        "express": "latest",
-        "jade": "latest",
-        "mongojs": "latest",
-        "passport": "latest",
-        "passport-facebook": "latest",
-        "passport-google": "latest",
-        "socket.io": "latest"
+  "name": "occupational-octaves-piano",
+  "url": "https://github.com/akashkrishnan/occupational-octaves-piano",
+  "version": "0.2.0",
+  "description": "occupational-octaves-piano",
+  "author": [
+    {
+      "name": "Akash Krishnan",
+      "email": "ak@aakay.net",
+      "url": "http://aakay.net"
     },
-    "author": [
-        { "name": "Michael Areau" },
-        { "name": "Akash Krishnan" }
-    ]
+    {
+      "name": "Michael Areau"
+    }
+  ],
+  "dependencies": {
+    "connect": "latest",
+    "express": "latest",
+    "jade": "latest"
+  }
 }
