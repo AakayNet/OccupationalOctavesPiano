@@ -44,58 +44,70 @@ var Game = function (c) {
 
   // List of all song notes structured by song, right/left hand, and note. Note of 0 is empty.
   var songs = [
-    [
-      [40, 40, 40, 40, 40, 40, 40, 40, 0, 0, 0, 0, 0, 0, 0, 0, 40, 40, 40, 40, 0, 0, 0, 0, 40, 40, 0, 0, 40, 40, 0, 0],
-      [0, 0, 0, 0, 0, 0, 0, 0, 40, 40, 40, 40, 40, 40, 40, 40, 0, 0, 0, 0, 40, 40, 40, 40, 0, 0, 40, 40, 0, 0, 40, 40]
-    ],
-    [
-      [40, 40, 40, 0, 0, 0, 40, 0, 40, 40, 0, 40, 0, 40, 0, 40, 0, 40, 0],
-      [0, 0, 0, 40, 40, 40, 0, 40, 0, 0, 40, 0, 40, 0, 40, 0, 40, 0, 40]
-    ],
-    [
-      [40, 42, 40, 42, 40, 42, 40, 42, 40, 42, 40, 42, 40, 42, 40, 40, 40, 40, 0, 0, 0, 0],
-      [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 40, 40, 40, 40]
-    ],
-    [
-      [40, 40, 40, 40, 42, 42, 42, 42, 40, 40, 40, 40, 42, 42, 42, 42, 40, 42, 42, 42, 40, 40, 40, 42, 40, 42, 40],
-      [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
-    ],
-    [
-      [0, 42, 0, 42, 0, 0, 42, 0, 42, 0, 42, 42, 0, 0, 0, 42, 42, 42, 0, 42, 42, 0, 0],
-      [40, 0, 40, 0, 40, 40, 0, 40, 0, 40, 0, 0, 40, 40, 40, 0, 0, 0, 40, 0, 0, 40, 40]
-    ],
-    [
-      [40, 40, 42, 42, 44, 44, 42, 42, 40, 40, 42, 42, 44, 44, 42, 42, 44, 40, 44, 42, 44, 40, 40, 40, 42, 44, 40, 44, 40],
-      [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
-    ],
-    [
-      [44, 42, 40, 42, 44, 44, 44, 42, 42, 42, 44, 44, 44, 44, 42, 40, 42, 44, 44, 44, 40, 42, 42, 44, 42, 40],
-      [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
-    ],
-    [
-      [40, 40, 42, 44, 40, 44, 42, 0, 40, 40, 42, 44, 40, 0, 0, 40, 40, 42, 44, 45, 44, 42, 40, 0, 0, 0, 0, 0, 40],
-      [0, 0, 0, 0, 0, 0, 0, 35, 0, 0, 0, 0, 0, 39, 35, 0, 0, 0, 0, 0, 0, 0, 0, 39, 35, 37, 39, 40, 0]
-    ],
-    [
-      [0, 0, 42, 42, 44, 44, 42, 0, 0, 0, 0, 0, 0, 0, 42, 42, 40, 40, 0, 0, 0, 42, 42, 40, 40, 0, 0, 0, 0, 0, 42, 42, 44, 44, 42, 0, 0, 0, 0, 0, 0, 0],
-      [35, 35, 0, 0, 0, 0, 0, 40, 40, 39, 39, 37, 37, 35, 0, 0, 0, 0, 39, 39, 37, 0, 0, 0, 0, 39, 39, 37, 35, 35, 0, 0, 0, 0, 0, 40, 40, 39, 39, 37, 37, 35]
-    ],
-    [
-      [0, 0, 0, 0, 0, 0, 0, 0, 40, 42, 47, 47, 47, 42, 42, 42, 0, 0, 0, 0, 0, 0, 42, 40, 0, 0, 0],
-      [35, 35, 35, 37, 39, 39, 37, 39, 0, 0, 0, 0, 0, 0, 0, 0, 39, 39, 39, 35, 35, 35, 0, 0, 39, 37, 35]
-    ]
+    {
+      name: 'The New C',
+      right: [40, 40, 40, 40, 40, 40, 40, 40, 0, 0, 0, 0, 0, 0, 0, 0, 40, 40, 40, 40, 0, 0, 0, 0, 40, 40, 0, 0, 40, 40, 0, 0],
+      left: [0, 0, 0, 0, 0, 0, 0, 0, 40, 40, 40, 40, 40, 40, 40, 40, 0, 0, 0, 0, 40, 40, 40, 40, 0, 0, 40, 40, 0, 0, 40, 40]
+    },
+    {
+      name: 'Sun and Moon',
+      right: [40, 40, 40, 0, 0, 0, 40, 0, 40, 40, 0, 40, 0, 40, 0, 40, 0, 40, 0],
+      left: [0, 0, 0, 40, 40, 40, 0, 40, 0, 0, 40, 0, 40, 0, 40, 0, 40, 0, 40]
+    },
+    {
+      name: 'The New D',
+      right: [40, 42, 40, 42, 40, 42, 40, 42, 40, 42, 40, 42, 40, 42, 40, 40, 40, 40, 0, 0, 0, 0],
+      left: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 40, 40, 40, 40]
+    },
+    {
+      name: 'Seedy Song',
+      right: [40, 40, 40, 40, 42, 42, 42, 42, 40, 40, 40, 40, 42, 42, 42, 42, 40, 42, 42, 42, 40, 40, 40, 42, 40, 42, 40],
+      left: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+    },
+    {
+      name: 'Hand Switch',
+      right: [0, 42, 0, 42, 0, 0, 42, 0, 42, 0, 42, 42, 0, 0, 0, 42, 42, 42, 0, 42, 42, 0, 0],
+      left: [40, 0, 40, 0, 40, 40, 0, 40, 0, 40, 0, 0, 40, 40, 40, 0, 0, 0, 40, 0, 0, 40, 40]
+    },
+    {
+      name: 'The New E',
+      right: [40, 40, 42, 42, 44, 44, 42, 42, 40, 40, 42, 42, 44, 44, 42, 42, 44, 40, 44, 42, 44, 40, 40, 40, 42, 44, 40, 44, 40],
+      left: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+    },
+    {
+      name: 'Mary had a Little Lamb',
+      right: [44, 42, 40, 42, 44, 44, 44, 42, 42, 42, 44, 44, 44, 44, 42, 40, 42, 44, 44, 44, 40, 42, 42, 44, 42, 40],
+      left: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+    },
+    {
+      name: 'Yankee Doodle',
+      right: [40, 40, 42, 44, 40, 44, 42, 0, 40, 40, 42, 44, 40, 0, 0, 40, 40, 42, 44, 45, 44, 42, 40, 0, 0, 0, 0, 0, 40],
+      left: [0, 0, 0, 0, 0, 0, 0, 35, 0, 0, 0, 0, 0, 39, 35, 0, 0, 0, 0, 0, 0, 0, 0, 39, 35, 37, 39, 40, 0]
+    },
+    {
+      name: 'Twinkle, Twinkle',
+      right: [0, 0, 42, 42, 44, 44, 42, 0, 0, 0, 0, 0, 0, 0, 42, 42, 40, 40, 0, 0, 0, 42, 42, 40, 40, 0, 0, 0, 0, 0, 42, 42, 44, 44, 42, 0, 0, 0, 0, 0, 0, 0],
+      left: [35, 35, 0, 0, 0, 0, 0, 40, 40, 39, 39, 37, 37, 35, 0, 0, 0, 0, 39, 39, 37, 0, 0, 0, 0, 39, 39, 37, 35, 35, 0, 0, 0, 0, 0, 40, 40, 39, 39, 37, 37, 35]
+    },
+    {
+      name: 'Row Your Boat (Easy)',
+      right: [0, 0, 0, 0, 0, 0, 0, 0, 40, 42, 47, 47, 47, 42, 42, 42, 0, 0, 0, 0, 0, 0, 42, 40, 0, 0, 0],
+      left: [35, 35, 35, 37, 39, 39, 37, 39, 0, 0, 0, 0, 0, 0, 0, 0, 39, 39, 39, 35, 35, 35, 0, 0, 39, 37, 35]
+    }
   ];
 
-  // Load all images asynchronously
+  /**
+   * Load all images asynchronously
+   */
   var bg = {
     main: loadImage('/img/bg-main.png'),
     menu: loadImage('/img/bg-menu.png'),
     game: loadImage('/img/bg-game.png'),
     paused: loadImage('/img/popup/paused.png')
   };
-  var btn = loadButtons(['play', 'exit', 'options', 'help', 'help2', 'pause', 'restart', 'menu', 'continue', 'retry']);
-  var song_btn = loadSongButtons(songs.length);
+  var btn = loadButtons(['song', 'play', 'exit', 'options', 'help', 'help2', 'pause', 'restart', 'menu', 'continue', 'retry']);
   var ms = loadImage('/img/ms08.png');
+  var song_notes = loadSongNoteImages([33, 35, 37, 39, 40, 42, 44, 45, 47]);
   var notes = loadNoteImages([33, 35, 37, 39, 40, 42, 44, 45, 47]);
   var cright = loadImage('/img/notes/40-right.png');
   var sharp = loadImage('/img/notes/sharp.png');
@@ -132,7 +144,9 @@ var Game = function (c) {
   scores[2] = loadImage('/img/popup/2-star.png');
   scores[3] = loadImage('/img/popup/3-star.png');
 
-  // Load note tones synchronously using Web Audio API
+  /**
+   * Load note tones synchronously using Web Audio API
+   */
   var tones = {};
   var tone_names = ['wrong', 'click'];
   for (var i = 33; i < 48; i++) tone_names.push(i);
@@ -192,14 +206,15 @@ var Game = function (c) {
       case states.menu:
       {
 
-        song_btn.forEach(function (b, i) {
+        var b = btn.song;
+        songs.forEach(function (song, i) {
           var _w = b.img.up.width;
           var _h = b.img.up.height;
-          var xo = (250 + (_w + 50) * (i % 5)) * s;
-          var yo = (60 + (_h + 50) * Math.floor(i / 5)) * s;
+          var xo = (255 + (_w + 65) * (i % 5)) * s;
+          var yo = (200 + (_h + 45) * Math.floor(i / 5)) * s;
           if (xo <= x && x <= xo + _w * s && yo <= y && y <= yo + _h * s) {
             playSound('click');
-            b.down = true;
+            b.down = i + 1;
           }
         });
 
@@ -353,9 +368,7 @@ var Game = function (c) {
             var xo = (340 + (_w + 55) * i) * s;
             var yo = h - (120 + _h) * s;
             if (xo <= x && x <= xo + _w * s && yo <= y && y <= yo + _h * s) {
-              if (b == btn.play) {
-                state = states.menu;
-              }
+              if (b == btn.play) state = states.menu;
             }
           }
         });
@@ -367,12 +380,13 @@ var Game = function (c) {
       case states.menu:
       {
 
-        song_btn.forEach(function (b, i) {
+        var b = btn.song;
+        songs.forEach(function (song, i) {
           if (b.down) {
             var _w = b.img.up.width;
             var _h = b.img.up.height;
-            var xo = (250 + (_w + 50) * (i % 5)) * s;
-            var yo = (60 + (_h + 50) * Math.floor(i / 5)) * s;
+            var xo = (255 + (_w + 65) * (i % 5)) * s;
+            var yo = (200 + (_h + 45) * Math.floor(i / 5)) * s;
             if (xo <= x && x <= xo + _w * s && yo <= y && y <= yo + _h * s) {
               startSong(i);
             }
@@ -386,9 +400,7 @@ var Game = function (c) {
             var xo = (520 + (_w + 55) * i) * s;
             var yo = h - (30 + _h) * s;
             if (xo <= x && x <= xo + _w * s && yo <= y && y <= yo + _h * s) {
-              if (b == btn.exit) {
-                state = states.main;
-              }
+              if (b == btn.exit) state = states.main;
             }
           }
         });
@@ -406,11 +418,8 @@ var Game = function (c) {
           var xo = (718 + (_w + 55) * i) * s;
           var yo = h - (530 + _h) * s;
           if (xo <= x && x <= xo + _w * s && yo <= y && y <= yo + _h * s) {
-            if (b == btn.retry) {
-              startSong(song);
-            } else {
-              state = states.menu;
-            }
+            if (b == btn.retry) startSong(song);
+            else state = states.menu;
           }
         });
 
@@ -422,15 +431,10 @@ var Game = function (c) {
             var yo = 60 * s;
             if (xo <= x && x <= xo + _w * s && yo <= y && y <= yo + _h * s) {
               if (timer) timer.pause();
-              if (b == btn.help) {
-                //showHelp();
-              } else if (b == btn.pause) {
-                paused = true;
-              } else if (b == btn.restart) {
-                startSong(song);
-              } else if (b == btn.menu) {
-                state = states.menu;
-              }
+              if (b == btn.help) /*showHelp()*/;
+              else if (b == btn.pause) paused = true;
+              else if (b == btn.restart) startSong(song);
+              else if (b == btn.menu) state = states.menu;
             }
           }
         });
@@ -441,16 +445,14 @@ var Game = function (c) {
 
       case states.free:
       {
+
         break;
+
       }
 
     }
 
     $.each(btn, function (i, b) {
-      b.down = false;
-    });
-
-    song_btn.forEach(function (b, i) {
       b.down = false;
     });
 
@@ -479,18 +481,17 @@ var Game = function (c) {
         // Background
         ctx.drawImage(bg.main, 0, 0, w, h);
 
-        // Draw progress bar
-        var _w = btn.play.img.up.width;
-        _w = (_w * 4 + 55 * 3) * s;
+        // Draw empty bar
+        var _w = btn.play.img.up.width * 4 + 55 * 3;
         var _h = btn.play.img.up.height;
         var xo = 340 * s;
         var yo = h - (120 + _h) * s;
-        ctx.rect(xo, yo, _w, _h * s);
+        ctx.rect(xo, yo, _w * s, _h * s);
         ctx.stroke();
 
         // Draw progress
         var p = loadedTones / nTones;
-        ctx.fillRect(xo, yo, _w * p, _h * s);
+        ctx.fillRect(xo, yo, _w * s * p, _h * s);
 
         break;
 
@@ -522,12 +523,38 @@ var Game = function (c) {
         ctx.drawImage(bg.menu, 0, 0, w, h);
 
         // Song buttons
-        song_btn.forEach(function (b, i) {
+        var b = btn.song;
+        songs.forEach(function (song, i) {
+
+          // Draw button
           var _w = b.img.up.width;
           var _h = b.img.up.height;
-          var xo = (250 + (_w + 50) * (i % 5)) * s;
-          var yo = (60 + (_h + 50) * Math.floor(i / 5)) * s;
-          ctx.drawImage(b.down ? b.img.down : b.img.up, xo, yo, _w * s, _h * s);
+          var xo = (255 + (_w + 65) * (i % 5)) * s;
+          var yo = (200 + (_h + 45) * Math.floor(i / 5)) * s;
+          ctx.drawImage(b.img.up, xo, yo, _w * s, _h * s);
+          if (b.down == i + 1) ctx.drawImage(b.img.down, xo, yo, _w * s, _h * s);
+
+          // Draw notes
+          wk.n.forEach(function (n) {
+
+            // Find base if black key
+            if (isBlackKey(n)) n--;
+
+            // Check if note exists in song
+            if (song.left.indexOf(n) > -1 || song.right.indexOf(n) > -1) {
+
+              // Draw note
+              ctx.drawImage(song_notes[n], xo, yo, _w * s, _h * s);
+
+            }
+          });
+
+          // Draw name
+          ctx.fillStyle = '#000000';
+          ctx.textAlign = 'center';
+          ctx.font = (30 * s) + 'px Verdana';
+          wrapText(ctx, song.name, xo + 145 * s, yo + 200 * s, _w * .9 * s, (30 + 10) * s);
+
         });
 
         // Function buttons
@@ -562,13 +589,14 @@ var Game = function (c) {
         ctx.drawImage(ms, 235 * s, 235 * s, ms.width * s, ms.height * s);
 
         // Notes
+        var nNotes = songs[song].right.length;
         for (var i = 0; i < 8; i++) {
 
           var io = Math.floor(tracker.pos / 8) * 8;
-          if (io + i < songs[song][0].length) {
+          if (io + i < nNotes) {
 
             // Right hand notes
-            var rhn = songs[song][0][io + i];
+            var rhn = songs[song].right[io + i];
             if (rhn) {
 
               // Sharps
@@ -578,16 +606,13 @@ var Game = function (c) {
               }
 
               // Special case for middle C (left hand or right hand)
-              if (rhn == 40) {
-                ctx.drawImage(cright, (235 + 12 + (12 + 176) * i) * s, (235 + 12) * s, notes[33].width * s, notes[33].height * s);
-              } else {
-                ctx.drawImage(notes[rhn], (235 + 12 + (12 + 176) * i) * s, (235 + 12) * s, notes[33].width * s, notes[33].height * s);
-              }
+              if (rhn == 40) ctx.drawImage(cright, (235 + 12 + (12 + 176) * i) * s, (235 + 12) * s, notes[33].width * s, notes[33].height * s);
+              else ctx.drawImage(notes[rhn], (235 + 12 + (12 + 176) * i) * s, (235 + 12) * s, notes[33].width * s, notes[33].height * s);
 
             }
 
             // Left hand notes
-            var lhn = songs[song][1][io + i];
+            var lhn = songs[song].left[io + i];
             if (lhn) {
 
               // Sharps
@@ -788,6 +813,20 @@ function loadImage(src) {
 }
 
 /**
+ * Load song note images given list of note numbers
+ *
+ * @param (Array) notes
+ * @returns {Object}
+ */
+function loadSongNoteImages(notes) {
+  var img = {};
+  for (var i = 0; i < notes.length; i++) {
+    img[notes[i]] = loadImage('/img/btn/song/' + notes[i] + '.png');
+  }
+  return img;
+}
+
+/**
  * Load note images given list of note numbers
  *
  * @param (Array) notes
@@ -832,20 +871,6 @@ function loadButtons(names) {
 }
 
 /**
- * Load song buttons given number of songs
- *
- * @param nSongs
- * @returns {Array}
- */
-function loadSongButtons(nSongs) {
-  var btn = [];
-  for (var i = 0; i < nSongs; i++) {
-    btn[i] = loadButton('songs/' + (i + 1));
-  }
-  return btn;
-}
-
-/**
  * Determine mouse coordinates given mouse event relative to canvas
  *
  * @param (Object) c
@@ -858,6 +883,55 @@ function getMousePos(c, e) {
     x: e.clientX - r.left,
     y: e.clientY - r.top
   };
+}
+
+/**
+ * @param (Object) ctx context
+ * @param (String) text
+ * @param (Number) x
+ * @param (Number) y
+ * @param (Number) maxWidth
+ * @param (Number) lineHeight
+ * @returns {number}
+ */
+function measureTextHeight(ctx, text, x, y, maxWidth, lineHeight) {
+  var words = text.split(' ');
+  var line = '';
+  for (var n = 0; n < words.length; n++) {
+    var testLine = line + words[n] + ' ';
+    var metrics = ctx.measureText(testLine);
+    var testWidth = metrics.width;
+    if (testWidth > maxWidth && n > 0) {
+      line = words[n] + ' ';
+      y += lineHeight;
+    } else line = testLine;
+  }
+  return y;
+}
+
+/**
+ * @param (Object) ctx context
+ * @param (String) text
+ * @param (Number) x
+ * @param (Number) y
+ * @param (Number) maxWidth
+ * @param (Number) lineHeight
+ */
+function wrapText(ctx, text, x, y, maxWidth, lineHeight) {
+  y -= (measureTextHeight(ctx, text, x, y, maxWidth, lineHeight) - y) / 2;
+  var words = text.split(' ');
+  var line = '';
+  for (var n = 0; n < words.length; n++) {
+    var testLine = line + words[n] + ' ';
+    var metrics = ctx.measureText(testLine);
+    var testWidth = metrics.width;
+    if (testWidth > maxWidth && n > 0) {
+      ctx.fillText(line, x, y);
+      line = words[n] + ' ';
+      y += lineHeight;
+    } else line = testLine;
+  }
+  ctx.fillText(line, x, y);
 }
 
 /**
