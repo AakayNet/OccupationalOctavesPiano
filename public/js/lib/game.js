@@ -1,4 +1,4 @@
-var Game = function (c) {
+var Game = function (c, songs) {
 
   // Get canvas context
   var ctx = c.getContext('2d');
@@ -41,60 +41,6 @@ var Game = function (c) {
     game: 3,
     free: 4
   };
-
-  // List of all song notes structured by song, right/left hand, and note. Note of 0 is empty.
-  var songs = [
-    {
-      name: 'The New C',
-      right: [40, 40, 40, 40, 40, 40, 40, 40, 0, 0, 0, 0, 0, 0, 0, 0, 40, 40, 40, 40, 0, 0, 0, 0, 40, 40, 0, 0, 40, 40, 0, 0],
-      left: [0, 0, 0, 0, 0, 0, 0, 0, 40, 40, 40, 40, 40, 40, 40, 40, 0, 0, 0, 0, 40, 40, 40, 40, 0, 0, 40, 40, 0, 0, 40, 40]
-    },
-    {
-      name: 'Sun and Moon',
-      right: [40, 40, 40, 0, 0, 0, 40, 0, 40, 40, 0, 40, 0, 40, 0, 40, 0, 40, 0],
-      left: [0, 0, 0, 40, 40, 40, 0, 40, 0, 0, 40, 0, 40, 0, 40, 0, 40, 0, 40]
-    },
-    {
-      name: 'The New D',
-      right: [40, 42, 40, 42, 40, 42, 40, 42, 40, 42, 40, 42, 40, 42, 40, 40, 40, 40, 0, 0, 0, 0],
-      left: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 40, 40, 40, 40]
-    },
-    {
-      name: 'Seedy Song',
-      right: [40, 40, 40, 40, 42, 42, 42, 42, 40, 40, 40, 40, 42, 42, 42, 42, 40, 42, 42, 42, 40, 40, 40, 42, 40, 42, 40],
-      left: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
-    },
-    {
-      name: 'Hand Switch',
-      right: [0, 42, 0, 42, 0, 0, 42, 0, 42, 0, 42, 42, 0, 0, 0, 42, 42, 42, 0, 42, 42, 0, 0],
-      left: [40, 0, 40, 0, 40, 40, 0, 40, 0, 40, 0, 0, 40, 40, 40, 0, 0, 0, 40, 0, 0, 40, 40]
-    },
-    {
-      name: 'The New E',
-      right: [40, 40, 42, 42, 44, 44, 42, 42, 40, 40, 42, 42, 44, 44, 42, 42, 44, 40, 44, 42, 44, 40, 40, 40, 42, 44, 40, 44, 40],
-      left: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
-    },
-    {
-      name: 'Mary had a Little Lamb',
-      right: [44, 42, 40, 42, 44, 44, 44, 42, 42, 42, 44, 44, 44, 44, 42, 40, 42, 44, 44, 44, 40, 42, 42, 44, 42, 40],
-      left: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
-    },
-    {
-      name: 'Yankee Doodle',
-      right: [40, 40, 42, 44, 40, 44, 42, 0, 40, 40, 42, 44, 40, 0, 0, 40, 40, 42, 44, 45, 44, 42, 40, 0, 0, 0, 0, 0, 40],
-      left: [0, 0, 0, 0, 0, 0, 0, 35, 0, 0, 0, 0, 0, 39, 35, 0, 0, 0, 0, 0, 0, 0, 0, 39, 35, 37, 39, 40, 0]
-    },
-    {
-      name: 'Twinkle, Twinkle',
-      right: [0, 0, 42, 42, 44, 44, 42, 0, 0, 0, 0, 0, 0, 0, 42, 42, 40, 40, 0, 0, 0, 42, 42, 40, 40, 0, 0, 0, 0, 0, 42, 42, 44, 44, 42, 0, 0, 0, 0, 0, 0, 0],
-      left: [35, 35, 0, 0, 0, 0, 0, 40, 40, 39, 39, 37, 37, 35, 0, 0, 0, 0, 39, 39, 37, 0, 0, 0, 0, 39, 39, 37, 35, 35, 0, 0, 0, 0, 0, 40, 40, 39, 39, 37, 37, 35]
-    },
-    {
-      name: 'Row Your Boat (Easy)',
-      right: [0, 0, 0, 0, 0, 0, 0, 0, 40, 42, 47, 47, 47, 42, 42, 42, 0, 0, 0, 0, 0, 0, 42, 40, 0, 0, 0],
-      left: [35, 35, 35, 37, 39, 39, 37, 39, 0, 0, 0, 0, 0, 0, 0, 0, 39, 39, 39, 35, 35, 35, 0, 0, 39, 37, 35]
-    }
-  ];
 
   /**
    * Load all images asynchronously
@@ -168,7 +114,7 @@ var Game = function (c) {
       request.send();
     } else state = states.main;
   };
-  loadTone(loadedTones);
+  loadTone(0);
 
   /**
    * Mouse down event listener
@@ -233,6 +179,7 @@ var Game = function (c) {
 
       }
 
+      case states.free:
       case states.game:
       {
 
@@ -273,7 +220,7 @@ var Game = function (c) {
 
             wk.down = getWhiteKey(x, y);
             if (wk.down >= 0) {
-              if (wk.n[wk.down] == songs[song][0][tracker.pos] || wk.n[wk.down] == songs[song][1][tracker.pos]) {
+              if (wk.n[wk.down] == songs[song].left[tracker.pos] || wk.n[wk.down] == songs[song].right[tracker.pos]) {
 
                 playSound(wk.n[wk.down]);
                 timeup = false;
@@ -281,7 +228,7 @@ var Game = function (c) {
                 if (timer) timer.pause();
                 if (nscore < 0) nscore = 0;
                 if (tscore < 0) tscore = 0;
-                if (tracker.pos == songs[song][0].length) {
+                if (tracker.pos == songs[song].left.length) {
                   gameover = true;
                 } else {
                   timer = new Timer(function () {
@@ -301,7 +248,7 @@ var Game = function (c) {
 
           } else {
 
-            if (bk.n[wk.down] == songs[song][0][tracker.pos] || bk.n[bk.down] == songs[song][1][tracker.pos]) {
+            if (bk.n[wk.down] == songs[song].left[tracker.pos] || bk.n[bk.down] == songs[song].right[tracker.pos]) {
               playSound(bk.n[bk.down]);
               timeup = false;
               tracker.pos++;
@@ -328,13 +275,6 @@ var Game = function (c) {
           }
 
         }
-
-        break;
-
-      }
-
-      case states.free:
-      {
 
         break;
 
@@ -381,17 +321,18 @@ var Game = function (c) {
       {
 
         var b = btn.song;
-        songs.forEach(function (song, i) {
-          if (b.down) {
+        if (b.down) {
+          songs.forEach(function (song, i) {
             var _w = b.img.up.width;
             var _h = b.img.up.height;
             var xo = (255 + (_w + 65) * (i % 5)) * s;
             var yo = (200 + (_h + 45) * Math.floor(i / 5)) * s;
             if (xo <= x && x <= xo + _w * s && yo <= y && y <= yo + _h * s) {
-              startSong(i);
+              if (i) startSong(i);
+              else startFreePlay();
             }
-          }
-        });
+          });
+        }
 
         [btn.exit, btn.options, btn.help].forEach(function (b, i) {
           if (b.down) {
@@ -409,6 +350,7 @@ var Game = function (c) {
 
       }
 
+      case states.free:
       case states.game:
       {
 
@@ -438,13 +380,6 @@ var Game = function (c) {
             }
           }
         });
-
-        break;
-
-      }
-
-      case states.free:
-      {
 
         break;
 
@@ -570,6 +505,7 @@ var Game = function (c) {
 
       }
 
+      case states.free:
       case states.game:
       {
 
@@ -589,7 +525,7 @@ var Game = function (c) {
         ctx.drawImage(ms, 235 * s, 235 * s, ms.width * s, ms.height * s);
 
         // Notes
-        var nNotes = songs[song].right.length;
+        var nNotes = songs[song].left.length;
         for (var i = 0; i < 8; i++) {
 
           var io = Math.floor(tracker.pos / 8) * 8;
@@ -696,13 +632,6 @@ var Game = function (c) {
 
       }
 
-      case states.free:
-      {
-
-        break;
-
-      }
-
     }
   }
 
@@ -728,6 +657,7 @@ var Game = function (c) {
     tracker.pos = 0;
     gameover = false;
     paused = false;
+    song = songs.length;
     state = states.free;
   }
 
